@@ -328,3 +328,7 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+
+# Mine
+/src/BGRandomGenerator.sln
+/src/BGRandomGenerator/appsettings.Development.json

@@ -94,6 +94,12 @@ namespace BGRandomGenerator.Controllers
         }
 
         [HttpGet]
+        public ActionResult<string> DocumentNumber()
+        {
+            return Generator.DocumentNumber();
+        }
+
+        [HttpGet]
         public ActionResult<Bank> Bank()
         {
             var rootPath = Environment.ContentRootPath;

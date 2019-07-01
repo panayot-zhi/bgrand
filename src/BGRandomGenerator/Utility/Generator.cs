@@ -315,6 +315,15 @@ namespace BGRandomGenerator.Utility
             return phone;
         }
 
-
+        public static string DocumentNumber()
+        {
+            var documentNumberBuilder = new StringBuilder("6");
+            for (int i = 0; i < 8; i++)
+            {
+                documentNumberBuilder.Append(Random.Next(10));
+            }
+            
+            return documentNumberBuilder.ToString();
+        }
     }
 }

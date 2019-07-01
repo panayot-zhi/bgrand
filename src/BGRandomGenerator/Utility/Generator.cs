@@ -8,18 +8,18 @@ namespace BGRandomGenerator.Utility
 {
     public static class Generator
     {
-        private static readonly Random Rnd = new Random();
+        private static readonly Random Random = new Random();
 
         public static bool Percent(int chance)
         {
-            return Rnd.Next(100) < chance;
+            return Random.Next(100) < chance;
         }
 
         public static string EGN(DateTime? birthDay, string gender, int? region)
         {
             if (!region.HasValue || region < 0 || region > 999)
             {
-                region = Rnd.Next(0, 1000);
+                region = Random.Next(0, 1000);
             }
 
             if (!Constants.Genders.Contains(gender))
@@ -76,7 +76,7 @@ namespace BGRandomGenerator.Utility
         {
             if (!region.HasValue || region < 0 || region > 999)
             {
-                region = Rnd.Next(0, 1000);
+                region = Random.Next(0, 1000);
             }
 
             if (!Constants.Genders.Contains(gender))
@@ -132,7 +132,7 @@ namespace BGRandomGenerator.Utility
             var lnchBuilder = new StringBuilder(length);
             for (int i = 0; i < length - 1; i++)
             {
-                var randomNumber = Rnd.Next(10);
+                var randomNumber = Random.Next(10);
                 lnchBuilder.Insert(i, randomNumber);
                 lnchsum += randomNumber * Constants.LnchWeights[i];
             }
@@ -156,7 +156,7 @@ namespace BGRandomGenerator.Utility
                     int bulstatsum = 0;
                     for (int i = 0; i < length - 1; i++)
                     {
-                        var randomNumber = Rnd.Next(10);
+                        var randomNumber = Random.Next(10);
                         bulstatBuilder.Insert(i, randomNumber);
                         bulstatsum += randomNumber * Constants.BulstatWeights[i];
                     }
@@ -193,7 +193,7 @@ namespace BGRandomGenerator.Utility
                     int bulstatsum = 0;
                     for (int i = 8; i < length - 1; i++)
                     {
-                        var randomNumber = Rnd.Next(10);
+                        var randomNumber = Random.Next(10);
                         bulstat += randomNumber.ToString();
                         bulstatsum += randomNumber * Constants.BulstatWeights[i];
                     }
@@ -230,21 +230,21 @@ namespace BGRandomGenerator.Utility
             }
             
             var prefix = "BG00";
-            var accountType = Rnd.Next(100).ToString("00");
-            var accountNumber = Rnd.Next(100000000).ToString("00000000");            
+            var accountType = Random.Next(100).ToString("00");
+            var accountNumber = Random.Next(100000000).ToString("00000000");            
             var validateable = bank.BankAddressingEntity + accountType + accountNumber + prefix;
 
             var ibanNumbered = string.Empty;
-            foreach (var t in validateable)
+            foreach (var c in validateable)
             {
-                if (t >= 'A' && t <= 'Z')
+                if (c >= 'A' && c <= 'Z')
                 {
-                    uint number = Convert.ToUInt32(t) - 55;
+                    uint number = Convert.ToUInt32(c) - 55;
                     ibanNumbered += number.ToString();
                 }
                 else
                 {
-                    ibanNumbered += t;
+                    ibanNumbered += c;
                 }
             }
 
@@ -275,7 +275,7 @@ namespace BGRandomGenerator.Utility
         public static DateTime Date(DateTime startDate, DateTime endDate)
         {
             var timeSpan = endDate - startDate;
-            var randomTimeSpan = new TimeSpan(0, Rnd.Next(0, (int) timeSpan.TotalMinutes), 0);
+            var randomTimeSpan = new TimeSpan(0, Random.Next(0, (int) timeSpan.TotalMinutes), 0);
             return startDate + randomTimeSpan;
         }
 
@@ -309,7 +309,7 @@ namespace BGRandomGenerator.Utility
             
             for (int i = 0; i < length; i++)
             {
-                phone += Rnd.Next(10);
+                phone += Random.Next(10);
             }
 
             return phone;

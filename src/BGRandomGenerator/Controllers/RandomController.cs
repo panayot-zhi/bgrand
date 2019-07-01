@@ -1,11 +1,9 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.IO;
 using System.Linq;
-using System.Threading.Tasks;
 using BGRandomGenerator.Models;
 using BGRandomGenerator.Utility;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
 namespace BGRandomGenerator.Controllers
@@ -21,10 +19,6 @@ namespace BGRandomGenerator.Controllers
         [HttpGet]
         public ActionResult<string> Names(string gender, int? number)
         {            
-            var rootPath = Environment.ContentRootPath;
-            var constantsPath = System.IO.Path.Combine(rootPath, "Constants");            
-            var reader = new Reader(constantsPath);
-
             if (!number.HasValue)
             {
                 number = 1;
@@ -33,6 +27,10 @@ namespace BGRandomGenerator.Controllers
             {
                 return BadRequest($"Invalid number of names supplied: {number}");
             }
+
+            var rootPath = Environment.ContentRootPath;
+            var constantsPath = Path.Combine(rootPath, "Constants");
+            var reader = new Reader(constantsPath);
 
             string[] names;
             string[] surnames;
@@ -90,7 +88,7 @@ namespace BGRandomGenerator.Controllers
         public ActionResult<string> Street()
         {
             var rootPath = Environment.ContentRootPath;
-            var constantsPath = System.IO.Path.Combine(rootPath, "Constants");
+            var constantsPath = Path.Combine(rootPath, "Constants");
             var reader = new Reader(constantsPath);
             return reader.GetStreets().Random();
         }
@@ -99,9 +97,27 @@ namespace BGRandomGenerator.Controllers
         public ActionResult<Bank> Bank()
         {
             var rootPath = Environment.ContentRootPath;
-            var constantsPath = System.IO.Path.Combine(rootPath, "Constants");
+            var constantsPath = Path.Combine(rootPath, "Constants");
             var reader = new Reader(constantsPath);
             return reader.GetBanks().Random();
+        }
+
+        [HttpGet]
+        public ActionResult<string> BIC()
+        {
+            var rootPath = Environment.ContentRootPath;
+            var constantsPath = Path.Combine(rootPath, "Constants");
+            var reader = new Reader(constantsPath);
+            return reader.GetBanks().Random().BussinessIdentifierCode;
+        }
+
+        [HttpGet]
+        public ActionResult<string> BAE()
+        {
+            var rootPath = Environment.ContentRootPath;
+            var constantsPath = Path.Combine(rootPath, "Constants");
+            var reader = new Reader(constantsPath);
+            return reader.GetBanks().Random().BankAddressingEntity;
         }
 
         [HttpGet]
@@ -145,6 +161,16 @@ namespace BGRandomGenerator.Controllers
             }
 
             return Generator.BULSTAT(length.Value);
+        }
+
+        [HttpGet]
+        public ActionResult<string> IBAN(string bae)
+        {
+            var rootPath = Environment.ContentRootPath;
+            var constantsPath = Path.Combine(rootPath, "Constants");
+            var reader = new Reader(constantsPath);
+
+            return Generator.IBAN(reader.GetBanks().Random());
         }
     }
 }

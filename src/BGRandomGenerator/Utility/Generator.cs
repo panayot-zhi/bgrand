@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Linq;
+using System.Numerics;
 using System.Text;
+using BGRandomGenerator.Models;
 
 namespace BGRandomGenerator.Utility
 {
@@ -41,7 +43,7 @@ namespace BGRandomGenerator.Utility
                 region++;
             }
 
-            var egnBuilder = new StringBuilder(birthDate.ToString("yyMMdd") + region.Value.ToString().PadLeft(3, '0'));
+            var egnBuilder = new StringBuilder(birthDate.ToString("yyMMdd") + region.Value.ToString("000"));
             if (birthDate.Year > 1999)
             {
                 egnBuilder[2] = (int.Parse(egnBuilder[2].ToString()) + 4).ToString()[0];
@@ -98,7 +100,7 @@ namespace BGRandomGenerator.Utility
                 region++;
             }
 
-            var enchBuilder = new StringBuilder(birthDate.ToString("yyMMdd") + region.Value.ToString("###"));
+            var enchBuilder = new StringBuilder(birthDate.ToString("yyMMdd") + region.Value.ToString("000"));
             if (birthDate.Year > 1999)
             {
                 enchBuilder[2] = (int.Parse(enchBuilder[2].ToString()) + 4).ToString()[0];
@@ -220,6 +222,40 @@ namespace BGRandomGenerator.Utility
             throw new ArgumentException("Valid lengths are 9, 10 or 13.", nameof(length));
         }
 
+        public static string IBAN(Bank bank)
+        {
+            if (bank == null)
+            {
+                throw new ArgumentException("Please pass a banking institution.");
+            }
+            
+            var prefix = "BG00";
+            var accountType = Rnd.Next(100).ToString("00");
+            var accountNumber = Rnd.Next(100000000).ToString("00000000");            
+            var validateable = bank.BankAddressingEntity + accountType + accountNumber + prefix;
+
+            var ibanNumbered = string.Empty;
+            foreach (var t in validateable)
+            {
+                if (t >= 'A' && t <= 'Z')
+                {
+                    uint number = Convert.ToUInt32(t) - 55;
+                    ibanNumbered += number.ToString();
+                }
+                else
+                {
+                    ibanNumbered += t;
+                }
+            }
+
+            var ibanNumber = BigInteger.Parse(ibanNumbered);
+            var controlNumber = (98 - (ibanNumber % 97)).ToString("00");
+            prefix = prefix.Replace("00", controlNumber);
+            
+            var iban = prefix + bank.BankAddressingEntity + accountType + accountNumber;
+
+            return iban;
+        }
 
         public static DateTime Date(int startYear)
         {
@@ -243,9 +279,42 @@ namespace BGRandomGenerator.Utility
             return startDate + randomTimeSpan;
         }
 
-        private static string Gender()
+        public static string Gender()
         {
             return Constants.Genders.Random();
         }
+
+        public static string PhoneNumber(int? length)
+        {
+            if (!length.HasValue)
+            {
+                length = 10;
+            }
+
+            string phone;
+            switch (length)
+            {
+                case 10:
+                    phone = Constants.MobileOperators.Random();
+                    break;
+                case 13:
+                    phone = Constants.MobileOperators.Random().Replace("0", "+359");
+                    break;
+                case 14:
+                    phone = Constants.MobileOperators.Random().Replace("0", "00359");
+                    break;
+                default:
+                    throw new ArgumentException("Valid lengths are 10, 13 or 14.", nameof(length));
+            }
+            
+            for (int i = 0; i < length; i++)
+            {
+                phone += Rnd.Next(10);
+            }
+
+            return phone;
+        }
+
+
     }
 }
